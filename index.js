@@ -3,6 +3,8 @@ require("dotenv").config()
 const express = require('express')
 const app = express()
 const queries = require('./queries')
+const cors = require('cors')
+
 
 const bodyParser = require('body-parser')
 
@@ -14,8 +16,12 @@ const config = require('./knexfile')[process.env.NODE_ENV || "development"]
 const database = knex(config)
 const jwt = require('jsonwebtoken')
 
+app.use(cors());
+
+
 
 app.post("/users", (request, response) => {
+    
     const { username, password } = request.body 
 
     bcrypt.hash(password, 12).then(hashedPassword => {
@@ -114,4 +120,4 @@ app.get('/recipes', (request, response) => {
     queries.listAll().then(recipes => response.send(recipes))
 })
 
-app.listen(process.env.PORT || 4000, () => console.log('listening'))
+app.listen(process.env.PORT || 5000, () => console.log('listening'))
