@@ -4,6 +4,7 @@ const express = require('express')
 const app = express()
 const queries = require('./queries')
 const cors = require('cors')
+app.use(cors());
 
 
 const bodyParser = require('body-parser')
@@ -15,9 +16,6 @@ const knex = require('knex')
 const config = require('./knexfile')[process.env.NODE_ENV || "development"]
 const database = knex(config)
 const jwt = require('jsonwebtoken')
-
-app.use(cors());
-
 
 
 app.post("/users", (request, response) => {
@@ -57,11 +55,18 @@ app.post('/login', async (request, response) => {
     id: foundUser.id,
     username: foundUser.username
    }, process.env.SECRET)
-   response.json({token})
+   
+   response.status(200).json({token})
 
 })
 
-app.get("/secrets", authenticate, (request, response) => {
+app.get('/user', authenticate, (request, response) => {
+
+    queries.listAll(user).then(recipes => response.send(recipes))
+
+})
+
+app.get("/recipes", authenticate, (request, response) => {
     console.log(request.user)
     response.json({
         secretInfo: "here you go"
