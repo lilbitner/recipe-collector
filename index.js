@@ -5,79 +5,29 @@ const app = express()
 const queries = require('./queries')
 const cors = require('cors')
 app.use(cors());
-
-
 const bodyParser = require('body-parser')
-
 app.use(bodyParser.json())
-
 const bcrypt = require("bcrypt")
 const knex = require('knex')
 const config = require('./knexfile')[process.env.NODE_ENV || "development"]
 const database = knex(config)
 const jwt = require('jsonwebtoken')
 
+const recipes = require('./routes/recipes')
+app.use("/recipes", recipes)
 
-app.post("/users", (request, response) => {
-    
-    const { username, password } = request.body 
+const users = require('./routes/user')
+app.use("/users", users)
+app.use("/login", users)
 
-    bcrypt.hash(password, 12).then(hashedPassword => {
-        database('user')
-        .insert({
-            username, 
-            password_hash: hashedPassword
-        }).returning('*')
-        .then(users => {
-            response.status(201).json({...users[0]})
-        })
-    })
 
-})
 
-app.post('/login', async (request, response) => {
-    const { username, password } = request.body
-    const foundUser = await database('user')
-        .select()
-        .where('username', username)
-        .first()
-    if (!foundUser) {
-        response.sendStatus(401)
-    }
+// app.get('/user', authenticate, (request, response) => {
 
-    const isPasswordMatch = await bcrypt.compare(password, foundUser.password_hash)
+//     queries.listUser(user).then(user => response.send(user))
 
-    if (!isPasswordMatch) {
-        response.sendStatus(401)
-    }
+// })
 
-   const token =  jwt.sign({
-    id: foundUser.id,
-    username: foundUser.username
-   }, process.env.SECRET)
-   
-   response.status(200).json({token})
-
-})
-
-app.get('/user', authenticate, (request, response) => {
-
-    queries.listAll(user).then(recipes => response.send(recipes))
-
-})
-
-app.get("/recipes", authenticate, (request, response) => {
-    console.log(request.user)
-    response.json({
-        secretInfo: "here you go"
-    })
-})
-
-app.get('/other-secrets', authenticate, (request, response) => {
-    response.json({
-        secretInfo: 'here you also go!'
-    })
-})
 
 
 async function authenticate(request, response, next) {
@@ -104,25 +54,8 @@ async function authenticate(request, response, next) {
     next()
 }
 
-app.post('/recipes', (request, response) => {
-    
-    const { title, category, image, user_id } = request.body 
-    
-    database('recipes')
-    .insert({
-        title,
-        category,
-        image, 
-        user_id
-    }).returning('*')
-    .then(recipes => {
-        response.status(201).json({...recipes[0]})
-    })
-})
 
 
-app.get('/recipes', (request, response) => {
-    queries.listAll().then(recipes => response.send(recipes))
-})
+
 
 app.listen(process.env.PORT || 5000, () => console.log('listening'))
