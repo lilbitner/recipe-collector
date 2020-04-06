@@ -1,9 +1,15 @@
 const express = require('express')
 const router = express.Router()
-module.exports = router 
+const bcrypt = require("bcrypt");
+const knex = require('knex');
+const config = require('../knexfile')[process.env.NODE_ENV || "development"];
+const database = knex(config);
+const jwt = require('jsonwebtoken');
+// module.exports = router 
 
 
-router.post("/users", (request, response) => {
+
+router.post("/", (request, response) => {
     
     const { username, password } = request.body 
 
@@ -13,12 +19,10 @@ router.post("/users", (request, response) => {
             username, 
             password_hash: hashedPassword
         }).returning('*')
-        .then(console.log)
         .then(users => {
             response.status(201).json({...users[0]})
         })
     })
-
 })
 
 
@@ -44,8 +48,9 @@ router.post('/login', async (request, response) => {
    }, process.env.SECRET)
    
    response.status(200).json({
-       token,
-       
+       token
     });
 
 })
+
+module.exports = router 

@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 module.exports = router 
 
-router.post('/recipes', (request, response) => {
+router.post('/', (request, response) => {
     
     const { title, category, image, user_id } = request.body 
     
@@ -19,6 +19,6 @@ router.post('/recipes', (request, response) => {
 })
 
 
-router.get('/recipes', (request, response) => {
+router.get('/', (request, response) => {
     queries.listAll().then(recipes => response.send(recipes))
 })
