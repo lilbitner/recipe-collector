@@ -7,4 +7,9 @@ module.exports = {
         .where('user_id', user.id)
     },
 
+    listUser(user) {
+        return database('user')
+        .where('user_id', user.id)
+    }
+
 }
