@@ -1,5 +1,9 @@
 const express = require('express')
 const router = express.Router()
+const queries = require('../queries');
+const knex = require('knex');
+const config = require('../knexfile')[process.env.NODE_ENV || "development"];
+const database = knex(config);
 module.exports = router 
 
 router.post('/', (request, response) => {
