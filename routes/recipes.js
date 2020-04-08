@@ -22,9 +22,43 @@ router.post('/', (request, response) => {
     })
 })
 
+async function authenticate(request, response, next) {
+    const token = request.headers.authorization.split(" ")[1]
 
-router.get('/', (request, response) => {
-    queries.listAll().then(recipes => response.send(recipes))
+    if(!token) {
+        response.sendStatus(401)
+    }
+
+    let id  
+    try {
+        id  = jwt.verify(token, process.env.SECRET).id 
+    } catch(error) {
+        response.sendStatus(403)
+    }
+
+    const user = await database("user")
+        .select()
+        .where("id", id)
+        .first()
+
+    request.user = user 
+
+    next()
+}
+
+router.get('/:id', async (request, response) => {
+    const userId = Number(request.params.id)
+    const recipes = await database('recipes')
+    .select()
+    .where('user_id', userId)
+
+    response.json({recipes})
+    // queries.listUser(userId).then(user => response.send(user))
 })
+
+
+// router.get('/', (request, response) => {
+//     queries.listAll().then(recipes => response.send(recipes))
+// })
 
 

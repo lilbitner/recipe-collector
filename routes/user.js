@@ -103,14 +103,14 @@ router.get('/authenticate', async (request, response) => {
 })
 
 
-router.get('/:id', authenticate, async (request, response) => {
-    const userId = Number(request.params.id)
-    const user = await database('user')
-    .select()
-    .where('id', userId)
+// router.get('/:id', authenticate, async (request, response) => {
+//     const userId = Number(request.params.id)
+//     const user = await database('user')
+//     .select()
+//     .where('id', userId)
 
-    response.json({user})
-    // queries.listUser(userId).then(user => response.send(user))
-})
+//     response.json({user})
+//     // queries.listUser(userId).then(user => response.send(user))
+// })
 
 module.exports = router 
