@@ -26,3 +26,5 @@ router.post('/', (request, response) => {
 router.get('/', (request, response) => {
     queries.listAll().then(recipes => response.send(recipes))
 })
+
+
