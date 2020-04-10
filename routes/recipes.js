@@ -8,12 +8,14 @@ module.exports = router
 
 router.post('/', (request, response) => {
     
-    const { title, category, image, user_id } = request.body 
+    const { title, description, category, url, image, user_id } = request.body 
     
     database('recipes')
     .insert({
         title,
+        description,
         category,
+        url,
         image, 
         user_id
     }).returning('*')
