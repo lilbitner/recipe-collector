@@ -58,6 +58,30 @@ router.get('/:id', async (request, response) => {
     // queries.listUser(userId).then(user => response.send(user))
 })
 
+router.delete('/delete/:id',  (request, response)=> {
+    const recipeId = Number(request.params.id)
+    database('recipes')
+    .delete()
+    .where('id', recipeId)
+    .then(
+        
+        // delete recipes[0] 
+        response.json({status: 200})
+    )
+    
+    // delete recipe 
+    
+
+    // response.json({status: 200})
+})
+
+// router.put('/put/:id', async (request, response) => {
+//     const recipeId = Number(request.params.id)
+//     onst recipe = await database('recipes')
+//     .select()
+//     .where('id', recipeId)
+// })
+
 
 // router.get('/', (request, response) => {
 //     queries.listAll().then(recipes => response.send(recipes))
