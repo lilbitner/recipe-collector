@@ -4,6 +4,7 @@ const queries = require('../queries');
 const knex = require('knex');
 const config = require('../knexfile')[process.env.NODE_ENV || "development"];
 const database = knex(config);
+const jwt = require('jsonwebtoken');
 module.exports = router 
 
 router.post('/', (request, response) => {
@@ -48,7 +49,7 @@ async function authenticate(request, response, next) {
     next()
 }
 
-router.get('/:id', async (request, response) => {
+router.get('/:id', authenticate, async (request, response) => {
     const userId = Number(request.params.id)
     const recipes = await database('recipes')
     .select()

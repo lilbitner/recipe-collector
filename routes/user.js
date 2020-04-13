@@ -9,10 +9,17 @@ const jwt = require('jsonwebtoken');
 
 
 
-router.post("/", (request, response) => {
+router.post("/", async (request, response) => {
     
-    const { username, password } = request.body 
-
+    const { username, password } = request.body
+    
+    const foundUser = await database('user')
+        .select()
+        .where('username', username)
+        .first()
+    if (!foundUser){
+        if (password.length < 5) {response.status(406).json({status: 406})}
+        else {
     bcrypt.hash(password, 12).then(hashedPassword => {
         database('user')
         .insert({
@@ -22,7 +29,12 @@ router.post("/", (request, response) => {
         .then(users => {
             response.status(201).json({...users[0]})
         })
-    })
+    })}}
+
+
+    if(foundUser) {
+        response.status(401).json({status: 401})
+    }
 })
 
 
@@ -56,30 +68,6 @@ router.post('/login', async (request, response) => {
 
 })
 
-async function authenticate(request, response, next) {
-    const token = request.headers.authorization.split(" ")[1]
-
-    if(!token) {
-        response.sendStatus(401)
-    }
-
-    let id  
-    try {
-        id  = jwt.verify(token, process.env.SECRET).id 
-    } catch(error) {
-        response.sendStatus(403)
-    }
-
-    const user = await database("user")
-        .select()
-        .where("id", id)
-        .first()
-
-    request.user = user 
-
-    next()
-}
-
 router.get('/authenticate', async (request, response) => {
     const token = request.headers.authorization.split(" ")[1]
 
@@ -102,15 +90,5 @@ router.get('/authenticate', async (request, response) => {
     request.user = user 
 })
 
-
-// router.get('/:id', authenticate, async (request, response) => {
-//     const userId = Number(request.params.id)
-//     const user = await database('user')
-//     .select()
-//     .where('id', userId)
-
-//     response.json({user})
-//     // queries.listUser(userId).then(user => response.send(user))
-// })
 
 module.exports = router 
