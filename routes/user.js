@@ -17,6 +17,7 @@ router.post("/", async (request, response) => {
         .select()
         .where('username', username)
         .first()
+
     if (!foundUser){
         if (password.length < 5) {response.status(406).json({status: 406})}
         else {
@@ -45,15 +46,12 @@ router.post('/login', async (request, response) => {
         .where('username', username)
         .first()
     if (!foundUser) {
-        // response.statusCode = 401
         response.status(401).json({status: 401})
     }
 
     const isPasswordMatch = await bcrypt.compare(password, foundUser.password_hash)
 
     if (!isPasswordMatch) {
-        // response.statusCode = 401;
-        // response.sendStatus(401)
         response.status(401).json({status: 401})
     }
 

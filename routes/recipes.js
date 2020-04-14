@@ -56,7 +56,6 @@ router.get('/:id', authenticate, async (request, response) => {
     .where('user_id', userId)
 
     response.json({recipes})
-    // queries.listUser(userId).then(user => response.send(user))
 })
 
 router.delete('/delete/:id',  (request, response)=> {
@@ -66,26 +65,11 @@ router.delete('/delete/:id',  (request, response)=> {
     .where('id', recipeId)
     .then(
         
-        // delete recipes[0] 
         response.json({status: 200})
-    )
+    ) 
     
-    // delete recipe 
-    
-
-    // response.json({status: 200})
 })
 
-// router.put('/put/:id', async (request, response) => {
-//     const recipeId = Number(request.params.id)
-//     onst recipe = await database('recipes')
-//     .select()
-//     .where('id', recipeId)
-// })
 
-
-// router.get('/', (request, response) => {
-//     queries.listAll().then(recipes => response.send(recipes))
-// })
 
 
